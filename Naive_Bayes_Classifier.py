@@ -1,6 +1,9 @@
 import csv
 import pandas
 import openpyxl
+from naiveBayesClassifier import tokenizer
+from naiveBayesClassifier.trainer import Trainer
+from naiveBayesClassifier.classifier import Classifier
 
 
 
@@ -25,11 +28,7 @@ for k in range(0,len(filelist)):
   d[j].append(my_dict.copy()) 
  j=j+1
 
- 
 
- 
-
- 
 '''
 print d[0]
 print d[1]
@@ -38,38 +37,30 @@ print d[3]
 print d[4]
 '''
 finald = d[0] + d[1] + d[2] + d[3] + d[4] + d[5]
-"""
-Suppose you have some texts of news and know their categories.
-You want to train a system with this pre-categorized/pre-classified 
-texts. So, you have better call this data your training set.
-"""
-from naiveBayesClassifier import tokenizer
-from naiveBayesClassifier.trainer import Trainer
-from naiveBayesClassifier.classifier import Classifier
 
 tweetTrainer = Trainer(tokenizer)
 
-# You need to train the system passing each text one by one to the trainer module.
-newsSet =[
-    {'text': 'not to eat too much is not enough to lose weight', 'category': 'health'},
-    {'text': 'Russia is trying to invade Ukraine', 'category': 'politics'},
-    {'text': 'do not neglect exercise', 'category': 'health'},
-    {'text': 'Syria is the main issue, Obama says', 'category': 'politics'},
-    {'text': 'eat to lose weight', 'category': 'health'},
-    {'text': 'you should not eat much', 'category': 'health'}
-]
+# Train the system passing each text one by one to the trainer module.
+
+'''
+{'text': 'not to eat too much is not enough to lose weight', 'category': 'health'},
+{'text': 'Russia is trying to invade Ukraine', 'category': 'politics'},
+{'text': 'do not neglect exercise', 'category': 'health'},
+{'text': 'Syria is the main issue, Obama says', 'category': 'politics'},
+{'text': 'eat to lose weight', 'category': 'health'},
+{'text': 'you should not eat much', 'category': 'health'}
+'''
 
 for tweet in finald:
     tweetTrainer.train(tweet['text'], tweet['category'])
 
-# When you have sufficient trained data, you are almost done and can start to use
-# a classifier.
+# When you have sufficient trained data, you are almost done and can start to use a classifier.
 truth_list = []
 pred_list = []
 tweetClassifier = Classifier(tweetTrainer.data, tokenizer)
 test_tweets = []
-# Now you have a classifier which can give a try to classifiy text of news whose
-# category is unknown, yet.
+
+# Try to classifiy tweet whose category is unknown yet using the trained classifier.
 unknownInstance = ""
 #print accuracy on each category
 
@@ -88,14 +79,8 @@ for j in range(0,len(filelist1)):
   pred_list.append(classification[0][0])
   if(classification[0][0] == label[k]):
    count = count + 1
-  #if(classification[0][0] == "sports"): counter[0] = counter[0] + 1
-  #if(classification[0][0] == "tech"): counter[1] = counter[1] + 1
-  #if(classification[0][0] == "fnl"): counter[2] = counter[2] + 1
-  #if(classification[0][0] == "business"): counter[3] = counter[3] + 1
-  #if(classification[0][0] == "politics"): counter[4] = counter[4] + 1
- 
- #for m in range(0,len(counter)) :
-  #if(m!=k): incorrect_class_fn += counter[m]
+  
+
    
  print count
  print l
@@ -106,8 +91,7 @@ for j in range(0,len(filelist1)):
  #print pred_list
  
 #classification = tweetClassifier.classify(unknownInstance)
-# the classification variable holds the possible categories sorted by 
-# their probablity value
+# the classification variable holds the possible categories sorted by their probablity value
 #print classification
 
 
